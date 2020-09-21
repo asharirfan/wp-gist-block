@@ -8,7 +8,8 @@
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:     gist-block
  *
- * @package         AsharIrfan\GistBlock
+ * @package AsharIrfan\GistBlock
+ * @since 0.1.0
  */
 
 namespace AsharIrfan\GistBlock;
@@ -19,7 +20,7 @@ defined( 'ABSPATH' ) || exit;
 /**
  * Register the block with WordPress.
  *
- * @author AsharIrfan
+ * @author Ashar Irfan
  * @since 0.1.0
  */
 function register_block() {
