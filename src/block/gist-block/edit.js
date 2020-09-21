@@ -2,13 +2,17 @@ import {
 	Button,
 	Card,
 	CardBody,
-	TextControl,
 	Toolbar,
 	ToolbarButton,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
-import { useEffect } from '@wordpress/element';
+import {
+	useEffect,
+	useRef,
+} from '@wordpress/element';
 import { BlockControls } from '@wordpress/block-editor';
+import Gist from '../../utils/components/gist';
+import GistInputControl from '../../utils/components/gist-input-control';
 
 // import './editor.scss';
 
@@ -30,10 +34,21 @@ export default function Edit( props ) {
 	} = props;
 
 	useEffect( () => {
-		if ( '' === attributes.gistUrl ) {
-			setAttributes( { isEditing: true } );
+		if ( '' !== attributes.gistUrl ) {
+			setAttributes( { isEditing: false } );
 		}
 	}, [] );
+
+	const gistUrlEl = useRef( '' );
+	const fileNameEl = useRef( '' );
+
+	const embedGist = () => {
+		setAttributes( {
+			gistUrl: gistUrlEl.current.value,
+			fileName: fileNameEl.current.value,
+			isEditing: false,
+		} );
+	};
 
 	return (
 		<>
@@ -56,30 +71,38 @@ export default function Edit( props ) {
 				</Toolbar>
 			</BlockControls>
 
-			<Card className={ className }>
-				<CardBody>
-					<h3>{ __( 'Gist Block', 'gist-block' ) }</h3>
-					<TextControl
-						label={ __( 'Gist URL', 'gist-block' ) }
-						placeholder={
-							__( 'Copy and paste the Gist URL here', 'gist-block' )
-						}
-						onChange={ ( gistUrl ) => setAttributes( { gistUrl } ) }
-						value={ attributes.gistUrl }
-					/>
-					<TextControl
-						label={ __( 'File name (Optional)', 'gist-block' ) }
-						placeholder={
-							__( 'Enter name of the file here.', 'gist-block' )
-						}
-						onChange={ ( fileName ) => setAttributes( fileName ) }
-						value={ attributes.fileName }
-					/>
-					<Button isSecondary={ true }>
-						{ __( 'Embed', 'gist-block' ) }
-					</Button>
-				</CardBody>
-			</Card>
+			{ attributes.isEditing ? (
+				<Card className={ className }>
+					<CardBody>
+						<h3>{ __( 'Gist Block', 'gist-block' ) }</h3>
+						<GistInputControl
+							label={ __( 'Gist URL', 'gist-block' ) }
+							placeholder={
+								__( 'Copy and paste the Gist URL here', 'gist-block' )
+							}
+							onChange={ ( gistUrl ) => setAttributes( { gistUrl } ) }
+							value={ attributes.gistUrl }
+							ref={ gistUrlEl }
+							id="gist-url-input-control"
+						/>
+						<GistInputControl
+							label={ __( 'File name (Optional)', 'gist-block' ) }
+							placeholder={
+								__( 'Enter name of the file here.', 'gist-block' )
+							}
+							onChange={ ( fileName ) => setAttributes( fileName ) }
+							value={ attributes.fileName }
+							ref={ fileNameEl }
+							id="gist-filename-input-control"
+						/>
+						<Button isSecondary={ true } onClick={ embedGist }>
+							{ __( 'Embed', 'gist-block' ) }
+						</Button>
+					</CardBody>
+				</Card>
+			) : (
+				<Gist url={ attributes.gistUrl } />
+			) }
 		</>
 	);
 }
