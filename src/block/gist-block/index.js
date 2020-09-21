@@ -32,7 +32,7 @@ registerBlockType( 'ashar-irfan/gist-block', {
 		},
 		isEditing: {
 			type: 'boolean',
-			default: false,
+			default: true,
 		},
 	},
 	edit,
