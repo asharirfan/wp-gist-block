@@ -51,7 +51,7 @@ export default function Edit( props ) {
 	};
 
 	return (
-		<>
+		<div className={ className }>
 			<BlockControls>
 				<Toolbar>
 					{ attributes.isEditing ? (
@@ -73,7 +73,7 @@ export default function Edit( props ) {
 
 			{ /* eslint-disable no-nested-ternary */ }
 			{ attributes.isEditing ? (
-				<Card className={ className }>
+				<Card>
 					<CardBody>
 						<h3>{ __( 'Gist Block', 'gist-block' ) }</h3>
 						<GistInputControl
@@ -105,6 +105,6 @@ export default function Edit( props ) {
 				<Gist url={ attributes.gistUrl } file={ attributes.fileName } />
 			)
 			) }
-		</>
+		</div>
 	);
 }
