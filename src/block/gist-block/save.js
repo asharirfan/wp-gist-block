@@ -1,12 +1,10 @@
-import { RichText } from '@wordpress/block-editor';
-
 /**
  * The save function defines the way in which the different attributes should
  * be combined into the final markup, which is then serialized by the block
  * editor into `post_content`.
  *
- * @author WebDevStudios
- * @since 0.0.1
+ * @author Ashar Irfan
+ * @since 0.1.0
  * @link https://developer.wordpress.org/block-editor/developers/block-api/block-edit-save/#save
  *
  * @param {Object} [props] Properties passed from the editor.
@@ -14,17 +12,17 @@ import { RichText } from '@wordpress/block-editor';
  */
 export default function Save( props ) {
 	const {
-		attributes: {
-			content,
-		},
+		attributes,
 		className,
 	} = props;
 
 	return (
-		<RichText.Content
-			className={ className }
-			tagName="p"
-			value={ content }
-		/>
+		<div className={ className }>
+			{ '' === attributes.fileName ? (
+				<script src={ `${ attributes.gistUrl }.js` } />
+			) : (
+				<script src={ `${ attributes.gistUrl }.js?file=${ attributes.fileName }` } />
+			) }
+		</div>
 	);
 }
