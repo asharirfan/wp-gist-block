@@ -71,6 +71,7 @@ export default function Edit( props ) {
 				</Toolbar>
 			</BlockControls>
 
+			{ /* eslint-disable no-nested-ternary */ }
 			{ attributes.isEditing ? (
 				<Card className={ className }>
 					<CardBody>
@@ -83,25 +84,26 @@ export default function Edit( props ) {
 							onChange={ ( gistUrl ) => setAttributes( { gistUrl } ) }
 							value={ attributes.gistUrl }
 							ref={ gistUrlEl }
-							id="gist-url-input-control"
 						/>
 						<GistInputControl
 							label={ __( 'File name (Optional)', 'gist-block' ) }
 							placeholder={
 								__( 'Enter name of the file here.', 'gist-block' )
 							}
-							onChange={ ( fileName ) => setAttributes( fileName ) }
+							onChange={ ( fileName ) => setAttributes( { fileName } ) }
 							value={ attributes.fileName }
 							ref={ fileNameEl }
-							id="gist-filename-input-control"
 						/>
 						<Button isSecondary={ true } onClick={ embedGist }>
 							{ __( 'Embed', 'gist-block' ) }
 						</Button>
 					</CardBody>
 				</Card>
-			) : (
+			) : ( '' === attributes.fileName ? (
 				<Gist url={ attributes.gistUrl } />
+			) : (
+				<Gist url={ attributes.gistUrl } file={ attributes.fileName } />
+			)
 			) }
 		</>
 	);
