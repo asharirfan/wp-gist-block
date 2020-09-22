@@ -1,6 +1,5 @@
 import edit from './edit';
-
-// import save from './save';
+import save from './save';
 import { __ } from '@wordpress/i18n';
 import { registerBlockType } from '@wordpress/blocks';
 
@@ -9,8 +8,8 @@ import { registerBlockType } from '@wordpress/blocks';
 /**
  * Register block type definition.
  *
- * @author WebDevStudios
- * @since 0.0.1
+ * @author Ashar Irfan
+ * @since 0.1.0
  * @link https://developer.wordpress.org/block-editor/developers/block-api/#registering-a-block
  */
 registerBlockType( 'ashar-irfan/gist-block', {
@@ -36,5 +35,5 @@ registerBlockType( 'ashar-irfan/gist-block', {
 		},
 	},
 	edit,
-	save: () => null,
+	save,
 } );
