@@ -57,14 +57,14 @@ export default function Edit( props ) {
 					{ attributes.isEditing ? (
 						<ToolbarButton
 							icon="welcome-view-site"
-							label={ __( 'Switch to Preview', 'giphy-block' ) }
+							label={ __( 'Switch to Preview', 'gist-block' ) }
 							onClick={ () => setAttributes( { isEditing: false } ) }
 							disabled={ '' === attributes.gistUrl }
 						/>
 					) : (
 						<ToolbarButton
 							icon="edit"
-							label={ __( 'Switch to Edit', 'giphy-block' ) }
+							label={ __( 'Switch to Edit', 'gist-block' ) }
 							onClick={ () => setAttributes( { isEditing: true } ) }
 						/>
 					) }
