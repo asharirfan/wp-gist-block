@@ -1,124 +1,137 @@
-// --- SUPER REACT GIST ---
-// Simple and flexible component that allows you to embed GitHub Gists in React projects.
+/**
+ * Simple and flexible component that allows you to embed GitHub Gists in React projects.
+ *
+ * @see https://github.com/georgegkas/super-react-gist
+ */
+import { useState, useEffect } from '@wordpress/element';
+import { __ } from '@wordpress/i18n';
+import { Spinner } from '@wordpress/components';
 
-// -- IMPORTS --
-// - GLOBAL -
-import React from 'react';
+// Unique identifier of each JSONP callback.
+let gistCallbackId = 0;
 
-// import PropTypes from 'prop-types';
+/**
+ * Each time we request a new Gist, we have to provide a new
+ * global function name to serve as the JSONP callback.
+ *
+ * @since 0.1.0
+ *
+ * @return {string} Global function name.
+ */
+const nextGist = () => {
+	return 'embed_gist_callback_' + gistCallbackId++;
+};
 
-let __gistCallbackId = 0; // Unique identifier of each JSONP callback.
+const Gist = ( props ) => {
 
-// -- MAIN --
-// Extending PureComponent allow us to prevent re-rendering when the props DONT change.
-class Gist extends React.PureComponent {
-	constructor( props ) {
-		super( props );
-		this.url = props.url;
-		this.file = props.file;
-		this.stylesheetAdded = false; // Ensures we only add the Gist's stylesheet one time.
-		this.state = {
-			loading: true, // We have not fetched the Gist yet.
-			gistContent: '', // Raw HTML of the Gist.
-		};
-	}
+	const { url, file } = props;
+	const [ isLoading, setIsLoading ] = useState( true );
+	const [ gistContent, setGistContent ] = useState( '' );
+	const [ stylesheetAdded, setStylesheetAdded ] = useState( false );
 
-	// Each time we request a new Gist, we have to provide a new
-	// global function name to serve as the JSONP callback.
-	// static __gistCallbackId = 0 // Unique identifier of each JSONP callback.
-
-	static __nextGist() {
-
-		// return 'embed_gist_callback_' + Gist.__gistCallbackId++;
-		return 'embed_gist_callback_' + __gistCallbackId++;
-	}
-
-	// The Gist JSON data includes a stylesheet file.
-	// We ensure to add that file only one time in our page.
-	static __addStylesheet( href ) {
-		if ( ! this.stylesheetAdded ) {
+	/**
+	 * Add gist stylesheet.
+	 *
+	 * The Gist JSON data includes a stylesheet file.
+	 * We ensure to add that file only one time in
+	 * our page.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param {string} href Stylesheet link.
+	 */
+	const addStylesheet = ( href ) => {
+		if ( ! stylesheetAdded ) {
 			const link = document.createElement( 'link' );
 			link.type = 'text/css';
 			link.rel = 'stylesheet';
 			link.href = href;
 			document.head.appendChild( link );
-			this.stylesheetAdded = true;
+			setStylesheetAdded( true );
 		}
-	}
+	};
 
-	componentDidMount() {
+	/**
+	 * Get gist ID.
+	 *
+	 * Extract a string in form `username/uniqueValue`
+	 * from the provided Gist url.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return {string} Gist ID.
+	 */
+	const getID = () => {
+		return ( url ).match( /(\.com\/)(.*?)([^#]+)/ ).pop();
+	};
 
-		// Request the Gist iframe.
-		this._buildGist();
-	}
-
-	_getID() {
-
-		// Extract a string in form `username/uniqueValue`
-		// from the provided Gist url.
-		return ( this.url ).match( /(\.com\/)(.*?)([^#]+)/ ).pop();
-	}
-
-	_getFile() {
+	/**
+	 * Get gist file name.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @return {string} Gist filename.
+	 */
+	const getFile = () => {
 
 		// If `file` prop was provided return that.
-		if ( null != this.file ) {
-			return `&file=${ this.file }`;
+		if ( undefined !== file ) {
+			return `&file=${ file }`;
 		}
 
 		// Else construct the file parameter from the `url` prop.
-		const file = ( this.url ).split( '#' ).pop();
+		const gistFile = ( url ).split( '#' ).pop();
 
 		// If the file parameter exist in Gist url return that file.
-		if ( null != file.match( /file*/ ) ) {
-			return `&file=${ file.replace( 'file-', '' ).replace( '-', '.' ) }`;
+		if ( null !== gistFile.match( /file*/ ) ) {
+			return `&file=${ gistFile.replace( 'file-', '' ).replace( '-', '.' ) }`;
 		}
 
 		// Else the user wants to link the whole Gist repository.
 		return '';
-	}
+	};
 
-	_tranformedURL( gistCallback ) {
+	/**
+	 * Construct a gist url that will allow us to redner the Gist into our page.
+	 *
+	 * @since 0.1.0
+	 *
+	 * @param {string} gistCallback Gist callback function.
+	 * @return {string} Gist embed URL.
+	 */
+	const tranformedURL = ( gistCallback ) => {
+		const id = getID();
+		const gistFile = getFile();
+		return `https://gist.github.com/${ id }.json?callback=${ gistCallback }${ gistFile }`;
+	};
 
-		// Construct a gist url that will allow us to redner the Gist into our page.
-		const id = this._getID();
-		const file = this._getFile();
-		return `https://gist.github.com/${ id }.json?callback=${ gistCallback }${ file }`;
-	}
+	useEffect( () => {
+		const buildGist = () => {
+			const gistCallback = nextGist();
+			window[ gistCallback ] = ( gist ) => {
+				addStylesheet( gist.stylesheet );
+				setIsLoading( false );
+				setGistContent( gist.div );
+			};
 
-	_buildGist() {
-		const gistCallback = Gist.__nextGist();
-		window[ gistCallback ] = ( gist ) => {
-			Gist.__addStylesheet( gist.stylesheet );
-			this.setState( {
-				loading: false,
-				gistContent: gist.div,
-			} );
+			const gistScript = document.createElement( 'script' );
+			gistScript.type = 'text/javascript';
+			gistScript.src = tranformedURL( gistCallback );
+			document.head.appendChild( gistScript );
 		};
 
-		const gistScript = document.createElement( 'script' );
-		gistScript.type = 'text/javascript';
-		gistScript.src = this._tranformedURL( gistCallback );
-		document.head.appendChild( gistScript );
-	}
+		buildGist();
+	}, [] );
 
-	render() {
-		if ( this.state.loading ) {
-			return <div>...waiting for Gist...</div>;
-		}
+	return (
+		<>
+			{ isLoading ? (
+				<div><Spinner />{ __( 'Waiting for Gist', 'gist-block' ) }</div>
+			) : (
+				<div dangerouslySetInnerHTML={ { __html: gistContent } } />
+			) }
+		</>
+	);
+};
 
-		// Render as html.
-		// https://reactjs.org/docs/dom-elements.html#dangerouslysetinnerhtml
-		return <div dangerouslySetInnerHTML={ { __html: this.state.gistContent } } />;
-
-	}
-}
-
-// - PROP TYPES -
-// Gist.propTypes = {
-// 	url: PropTypes.string.isRequired,
-// 	file: PropTypes.string,
-// };
-
-// -- EXPORTS --
 export default Gist;
