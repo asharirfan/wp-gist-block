@@ -33,7 +33,14 @@ registerBlockType( 'ashar-irfan/gist-block', {
 			type: 'boolean',
 			default: true,
 		},
+		align: {
+			type: 'string',
+			default: '',
+		},
 	},
 	edit,
 	save,
+	supports: {
+		align: true,
+	},
 } );
