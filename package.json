@@ -1,20 +1,23 @@
 {
-	"name": "wds-block-starter",
-	"version": "1.1.1",
-	"description": "A block starter for WebDevStudios projects.",
-	"author": "WebDevStudios",
-	"license": "GPL-3.0",
+	"name": "wp-gist-block",
+	"version": "0.1.0",
+	"description": "A block for displaying GitHub gists in Gutenberg.",
+	"author": "asharirfan",
+	"license": "GPL-2.0-or-later",
 	"bugs": {
-		"url": "https://github.com/WebDevStudios/wds-block-starter/issues"
+		"url": "https://github.com/asharirfan/wp-gist-block/issues"
 	},
-	"homepage": "https://github.com/WebDevStudios/wds-block-starter#readme",
+	"homepage": "https://github.com/asharirfan/wp-gist-block#readme",
 	"main": "src/index.js",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/WebDevStudios/wds-block-starter"
+		"url": "git+https://github.com/asharirfan/wp-gist-block"
 	},
 	"keywords": [
-		"Gutenberg"
+		"Gutenberg",
+		"WordPress",
+		"Gist",
+		"GitHub"
 	],
 	"dependencies": {},
 	"devDependencies": {
