@@ -3,7 +3,8 @@
  * Plugin Name:     Gist Block
  * Description:     A block for displaying GitHub gists in Gutenberg.
  * Version:         0.1.0
- * Author:          AsharIrfan
+ * Author:          Ashar Irfan
+ * Author URI:      https://asharirfan.com
  * License:         GPL-2.0-or-later
  * License URI:     https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:     gist-block
