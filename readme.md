@@ -1,6 +1,6 @@
 # 🧱 Gist Block
 
-Gutenberg block for displaying GitHub gists in the block editor.
+> Gutenberg block for displaying GitHub gists in the block editor.
 
 ![Screenshot](https://i.imgur.com/OHWtUi3.gif)
 
